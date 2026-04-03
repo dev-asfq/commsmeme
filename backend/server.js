@@ -4,7 +4,7 @@ const cors    = require('cors');
 const bcrypt  = require('bcryptjs');
 const jwt     = require('jsonwebtoken');
 const Database = require('better-sqlite3');
-const path    = require('path');
+
 const http    = require('http');
 const { Server } = require('socket.io');
 const path = require('path');

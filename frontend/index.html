@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>commsmeme</title>
+<meta property="og:title" content="commsmeme">
+<meta property="og:description" content="Your community, your memes.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#000;--bg2:#0f0f0f;--bg3:#16181c;--bg4:#1d1f23;
+  --border:#2f3336;--border2:#536471;
+  --text:#e7e9ea;--text2:#71767b;
+  --blue:#1d9bf0;--blue2:#1a8cd8;--blue-dim:#031827;
+  --green:#00ba7c;--red:#f4212e;--yellow:#ffd400;
+  --hover:rgba(255,255,255,0.03);--r:9999px;
+  --font:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden}
+button{cursor:pointer;border:none;background:none;font-family:var(--font);color:var(--text)}
+input,textarea{font-family:var(--font);color:var(--text);background:transparent;border:none;outline:none}
+input::placeholder,textarea::placeholder{color:var(--text2)}
+textarea{resize:none}
+a{color:var(--text);text-decoration:none}
+.hide{display:none!important}
+
+/* ── AUTH ── */
+#auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg)}
+.auth-box{background:var(--bg);border:1px solid var(--border);border-radius:16px;padding:40px;width:400px;max-width:95vw}
+.auth-logo{text-align:center;margin-bottom:8px;font-size:28px;font-weight:900;letter-spacing:-1px;color:var(--blue)}
+.auth-tagline{text-align:center;color:var(--text2);font-size:13px;margin-bottom:24px}
+.auth-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:24px}
+.auth-tab{flex:1;padding:14px;text-align:center;font-size:15px;font-weight:600;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;transition:.2s}
+.auth-tab.active{color:var(--text);border-bottom-color:var(--blue)}
+.auth-label{font-size:13px;color:var(--text2);margin-bottom:6px;display:block}
+.auth-input{width:100%;background:transparent;border:1px solid var(--border);border-radius:6px;padding:12px 14px;font-size:15px;color:var(--text);margin-bottom:14px;transition:.2s;outline:none}
+.auth-input:focus{border-color:var(--blue)}
+.auth-btn{width:100%;padding:13px;border-radius:var(--r);font-size:15px;font-weight:700;cursor:pointer;transition:.2s;margin-top:4px}
+.auth-btn.primary{background:var(--blue);color:#fff}
+.auth-btn.primary:hover{background:var(--blue2)}
+.auth-btn:disabled{opacity:.5;cursor:default}
+.err{color:var(--red);font-size:13px;margin-bottom:10px;min-height:18px}
+.pw-hint{font-size:12px;color:var(--text2);margin-top:-10px;margin-bottom:10px}
+
+/* ── LAYOUT ── */
+#app{display:flex;min-height:100vh;max-width:1280px;margin:0 auto}
+.sidebar{width:260px;position:sticky;top:0;height:100vh;overflow-y:auto;padding:0 8px;flex-shrink:0;display:flex;flex-direction:column}
+.sidebar-logo{padding:16px 12px 8px;font-size:22px;font-weight:900;color:var(--blue);letter-spacing:-0.5px}
+.nav-item{display:flex;align-items:center;gap:14px;padding:11px 12px;border-radius:var(--r);cursor:pointer;font-size:17px;font-weight:400;transition:.15s;margin-bottom:2px;white-space:nowrap}
+.nav-item:hover{background:var(--hover)}
+.nav-item.active{font-weight:700}
+.nav-icon{width:24px;text-align:center;font-size:20px;flex-shrink:0}
+.post-btn{width:100%;margin-top:14px;padding:13px;border-radius:var(--r);background:var(--blue);color:#fff;font-size:16px;font-weight:700;cursor:pointer;transition:.15s}
+.post-btn:hover{background:var(--blue2)}
+.sidebar-spacer{flex:1}
+.sidebar-user{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r);cursor:pointer;margin-bottom:8px}
+.sidebar-user:hover{background:var(--hover)}
+.avatar{width:40px;height:40px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;flex-shrink:0}
+.avatar.sm{width:32px;height:32px;font-size:13px}
+.avatar.lg{width:48px;height:48px;font-size:20px}
+.user-name{font-weight:700;font-size:15px;line-height:1.2}
+.user-handle{color:var(--text2);font-size:13px}
+
+/* ── MAIN COLUMN ── */
+.main{flex:1;border-left:1px solid var(--border);border-right:1px solid var(--border);min-height:100vh;max-width:600px}
+.page-header{position:sticky;top:0;z-index:10;background:rgba(0,0,0,0.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.page-title{padding:14px 16px;font-size:20px;font-weight:700}
+.page-title-row{display:flex;align-items:center;gap:12px;padding:12px 16px}
+.back-btn{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;flex-shrink:0;transition:.15s}
+.back-btn:hover{background:var(--hover)}
+.tabs{display:flex;border-bottom:1px solid var(--border)}
+.tab{flex:1;padding:15px;text-align:center;font-size:15px;font-weight:500;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;transition:.2s}
+.tab:hover{background:var(--hover)}
+.tab.active{color:var(--text);font-weight:700;border-bottom-color:var(--blue)}
+
+/* ── COMPOSE ── */
+.compose-box{display:flex;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border)}
+.compose-right{flex:1}
+.compose-input{width:100%;font-size:19px;line-height:1.5;min-height:60px;padding:8px 0}
+.compose-actions{display:flex;align-items:center;justify-content:space-between;padding-top:8px;border-top:1px solid var(--border);margin-top:8px}
+.compose-icons{display:flex;gap:2px;color:var(--blue)}
+.compose-icon-btn{padding:8px;border-radius:50%;cursor:pointer;font-size:16px;transition:.15s}
+.compose-icon-btn:hover{background:var(--blue-dim)}
+.char-count{font-size:13px;color:var(--text2)}
+.char-warn{color:var(--yellow)}
+.char-danger{color:var(--red)}
+.send-btn{padding:8px 18px;border-radius:var(--r);background:var(--blue);color:#fff;font-size:15px;font-weight:700;cursor:pointer;transition:.15s}
+.send-btn:hover{background:var(--blue2)}
+.send-btn:disabled{opacity:.5;cursor:default}
+
+/* ── POSTS ── */
+.post{display:flex;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:.15s}
+.post:hover{background:var(--hover)}
+.post-body{flex:1;min-width:0}
+.post-header{display:flex;align-items:center;gap:6px;margin-bottom:2px;flex-wrap:wrap}
+.post-name{font-weight:700;font-size:15px}
+.post-handle{color:var(--text2);font-size:14px}
+.post-time{color:var(--text2);font-size:14px}
+.post-dot{color:var(--text2)}
+.post-comm-tag{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--text2);background:var(--bg3);border-radius:var(--r);padding:2px 8px;cursor:pointer;margin-bottom:4px;border:1px solid var(--border);transition:.15s}
+.post-comm-tag:hover{border-color:var(--blue);color:var(--blue)}
+.post-text{font-size:15px;line-height:1.5;margin-bottom:10px;word-break:break-word;white-space:pre-wrap}
+.post-actions{display:flex;gap:4px;max-width:425px}
+.action-btn{display:flex;align-items:center;gap:6px;padding:8px 10px;border-radius:var(--r);font-size:13px;color:var(--text2);cursor:pointer;transition:.15s}
+.action-btn:hover.reply-btn{color:var(--blue);background:var(--blue-dim)}
+.action-btn:hover.repost-btn{color:var(--green);background:rgba(0,186,124,.1)}
+.action-btn:hover.like-btn{color:var(--red);background:rgba(244,33,46,.1)}
+.action-btn:hover.share-btn{color:var(--blue);background:var(--blue-dim)}
+.action-btn.liked{color:var(--red)}
+.action-btn.reposted{color:var(--green)}
+.action-icon{font-size:17px}
+
+/* ── POST DETAIL ── */
+.post-detail{padding:16px;border-bottom:1px solid var(--border)}
+.post-detail .post-header{margin-bottom:12px}
+.post-detail .post-text{font-size:23px;line-height:1.4;margin-bottom:16px}
+.post-detail-stats{display:flex;gap:20px;padding:12px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin-bottom:4px}
+.post-stat{font-size:15px;color:var(--text2)}
+.post-stat b{color:var(--text);font-weight:700}
+
+/* ── RIGHT SIDEBAR ── */
+.right-sidebar{width:340px;padding:0 20px 0 0;flex-shrink:0}
+.search-box{background:var(--bg3);border:1px solid transparent;border-radius:var(--r);display:flex;align-items:center;gap:10px;padding:10px 14px;margin-top:8px;transition:.2s}
+.search-box:focus-within{background:transparent;border-color:var(--blue)}
+.search-input{flex:1;font-size:15px;background:transparent}
+.widget-card{background:var(--bg3);border-radius:16px;margin-top:16px;overflow:hidden}
+.widget-title{font-size:19px;font-weight:800;padding:12px 16px 4px}
+.trend-item{padding:12px 16px;cursor:pointer;transition:.15s}
+.trend-item:hover{background:var(--hover)}
+.trend-cat{font-size:13px;color:var(--text2)}
+.trend-name{font-size:15px;font-weight:700}
+.trend-count{font-size:13px;color:var(--text2)}
+.show-more{color:var(--blue);font-size:15px;padding:14px 16px;cursor:pointer;display:block}
+.who-item{display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer;transition:.15s}
+.who-item:hover{background:var(--hover)}
+.who-info{flex:1}
+.follow-btn{padding:6px 16px;border-radius:var(--r);background:var(--text);color:var(--bg);font-size:14px;font-weight:700;cursor:pointer;transition:.15s}
+.follow-btn:hover{background:#ccc}
+.follow-btn.following{background:transparent;border:1px solid var(--border);color:var(--text)}
+
+/* ── COMMUNITIES ── */
+.community-card{border-bottom:1px solid var(--border);padding:16px;cursor:pointer;transition:.15s}
+.community-card:hover{background:var(--hover)}
+.comm-header{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.comm-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.comm-name{font-size:18px;font-weight:700}
+.comm-meta{font-size:14px;color:var(--text2)}
+.comm-desc{font-size:15px;color:var(--text2);line-height:1.4;margin-bottom:10px}
+.comm-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.join-btn{padding:6px 18px;border-radius:var(--r);background:transparent;border:1px solid var(--text);color:var(--text);font-size:14px;font-weight:700;cursor:pointer;transition:.15s}
+.join-btn:hover{background:rgba(255,255,255,.07)}
+.join-btn.joined{border-color:var(--red);color:var(--red)}
+.join-btn.joined:hover{background:rgba(244,33,46,.07)}
+.invite-link-btn{display:flex;align-items:center;gap:5px;padding:6px 14px;border-radius:var(--r);border:1px solid var(--border);color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;transition:.15s}
+.invite-link-btn:hover{border-color:var(--blue);color:var(--blue)}
+.create-comm-btn{display:flex;align-items:center;gap:8px;padding:12px 16px;color:var(--blue);font-size:15px;font-weight:600;cursor:pointer;border-bottom:1px solid var(--border);transition:.15s}
+.create-comm-btn:hover{background:var(--hover)}
+
+/* ── COMMUNITY PAGE ── */
+.comm-page-banner{height:110px;position:relative;display:flex;align-items:flex-end;padding:16px}
+.comm-page-icon{width:64px;height:64px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:30px;border:3px solid var(--bg)}
+.comm-page-info{padding:12px 16px 16px;border-bottom:1px solid var(--border)}
+.comm-page-name{font-size:22px;font-weight:800;margin-bottom:4px}
+.comm-page-desc{font-size:15px;color:var(--text2);margin-bottom:10px}
+.comm-page-meta{font-size:14px;color:var(--text2);display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px}
+.comm-page-actions{display:flex;gap:10px;flex-wrap:wrap}
+.comm-compose{display:flex;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border)}
+
+/* ── CHAT ── */
+.chat-layout{display:flex;height:100vh;overflow:hidden}
+.chat-list{width:330px;border-right:1px solid var(--border);overflow-y:auto;flex-shrink:0}
+.chat-header{padding:14px 16px;font-size:19px;font-weight:700;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(0,0,0,.9);backdrop-filter:blur(12px);display:flex;justify-content:space-between;align-items:center}
+.chat-item{display:flex;align-items:center;gap:12px;padding:12px 16px;cursor:pointer;transition:.15s;border-bottom:1px solid var(--border)}
+.chat-item:hover{background:var(--hover)}
+.chat-item.active{background:rgba(29,155,240,.07)}
+.chat-preview{flex:1;min-width:0}
+.chat-name{font-size:15px;font-weight:700;margin-bottom:2px}
+.chat-last{font-size:14px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.unread-badge{background:var(--blue);color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.chat-window{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.chat-win-header{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border);background:rgba(0,0,0,.9);backdrop-filter:blur(12px)}
+.chat-win-name{font-size:18px;font-weight:700}
+.chat-win-sub{font-size:13px;color:var(--text2)}
+.chat-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:8px}
+.msg{display:flex;gap:8px;max-width:85%}
+.msg.mine{flex-direction:row-reverse;align-self:flex-end}
+.msg-bubble{padding:10px 14px;border-radius:18px;font-size:15px;line-height:1.4;background:var(--bg3);border:1px solid var(--border);word-break:break-word}
+.msg.mine .msg-bubble{background:var(--blue);border-color:var(--blue);color:#fff}
+.msg-time{font-size:11px;color:var(--text2);align-self:flex-end;margin-bottom:2px;white-space:nowrap}
+.chat-input-row{display:flex;align-items:center;gap:10px;padding:12px 16px;border-top:1px solid var(--border)}
+.chat-text-input{flex:1;background:var(--bg3);border-radius:var(--r);padding:10px 16px;font-size:15px;color:var(--text);border:1px solid var(--border);transition:.2s}
+.chat-text-input:focus{border-color:var(--blue);outline:none}
+.chat-send-btn{background:var(--blue);color:#fff;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;transition:.15s;flex-shrink:0}
+.chat-send-btn:hover{background:var(--blue2)}
+.new-chat-btn{background:var(--blue);color:#fff;border-radius:var(--r);padding:8px 16px;font-size:14px;font-weight:700;cursor:pointer;transition:.15s}
+.new-chat-btn:hover{background:var(--blue2)}
+.no-chat-selected{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;color:var(--text2)}
+
+/* ── PROFILE ── */
+.profile-banner{height:130px;background:linear-gradient(135deg,#1a3a5c,#0a1628);position:relative}
+.profile-avatar-wrap{position:absolute;bottom:-36px;left:16px;border:4px solid var(--bg);border-radius:50%}
+.profile-actions{display:flex;justify-content:flex-end;padding:12px 16px}
+.profile-edit-btn{padding:8px 18px;border-radius:var(--r);border:1px solid var(--border);font-size:14px;font-weight:700;cursor:pointer;transition:.15s}
+.profile-edit-btn:hover{background:var(--hover)}
+.profile-info{padding:48px 16px 16px;border-bottom:1px solid var(--border)}
+.profile-name{font-size:20px;font-weight:800}
+.profile-handle{font-size:15px;color:var(--text2)}
+.profile-stats{display:flex;gap:20px;margin-top:12px}
+.profile-stat{font-size:14px}
+.profile-stat b{color:var(--text);font-weight:700}
+.profile-stat span{color:var(--text2)}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:1000}
+.modal{background:var(--bg);border:1px solid var(--border);border-radius:16px;width:560px;max-width:95vw;max-height:90vh;overflow-y:auto}
+.modal-header{display:flex;align-items:center;gap:14px;padding:12px 16px;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(0,0,0,.9);backdrop-filter:blur(12px)}
+.modal-close{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;transition:.15s}
+.modal-close:hover{background:var(--hover)}
+.modal-body{padding:20px}
+.modal-label{font-size:13px;color:var(--text2);margin-bottom:6px;display:block;font-weight:600}
+.modal-input{width:100%;background:transparent;border:1px solid var(--border);border-radius:6px;padding:12px 14px;font-size:15px;color:var(--text);margin-bottom:14px;transition:.2s;outline:none}
+.modal-input:focus{border-color:var(--blue)}
+.modal-textarea{width:100%;background:transparent;border:1px solid var(--border);border-radius:6px;padding:12px 14px;font-size:15px;color:var(--text);margin-bottom:14px;resize:none;outline:none;min-height:80px}
+.modal-textarea:focus{border-color:var(--blue)}
+.icon-picker{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.icon-opt{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;border:2px solid var(--border);transition:.15s}
+.icon-opt.selected{border-color:var(--blue);background:var(--blue-dim)}
+.icon-opt:hover{border-color:var(--border2)}
+.modal-err{color:var(--red);font-size:13px;margin-bottom:10px;min-height:16px}
+.modal-submit-btn{width:100%;padding:13px;border-radius:var(--r);font-size:15px;font-weight:700;cursor:pointer;background:var(--blue);color:#fff;transition:.2s;border:none}
+.modal-submit-btn:hover{background:var(--blue2)}
+.modal-submit-btn:disabled{opacity:.5;cursor:default}
+
+/* ── INVITE BANNER ── */
+.invite-banner{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center;margin:20px}
+.invite-banner-icon{font-size:40px;margin-bottom:8px}
+.invite-banner-name{font-size:20px;font-weight:800;margin-bottom:6px}
+.invite-banner-desc{font-size:14px;color:var(--text2);margin-bottom:16px}
+.invite-banner-join{padding:10px 28px;border-radius:var(--r);background:var(--blue);color:#fff;font-size:15px;font-weight:700;cursor:pointer;transition:.15s;border:none}
+.invite-banner-join:hover{background:var(--blue2)}
+
+/* ── UTILS ── */
+.notif{position:fixed;top:20px;right:20px;background:var(--blue);color:#fff;padding:12px 20px;border-radius:8px;font-size:14px;font-weight:600;z-index:9999;opacity:0;transition:.3s;pointer-events:none;max-width:320px}
+.notif.show{opacity:1}
+.spinner{display:inline-block;width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-state{padding:40px;text-align:center;color:var(--text2)}
+.empty-state{padding:60px 20px;text-align:center;color:var(--text2)}
+.empty-state-icon{font-size:40px;margin-bottom:12px}
+.empty-state-title{font-size:20px;font-weight:700;color:var(--text);margin-bottom:6px}
+.divider{border-bottom:1px solid var(--border)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1100px){.right-sidebar{display:none}}
+@media(max-width:700px){
+  .sidebar{width:68px;padding:0 4px}
+  .nav-label,.sidebar-user .user-name,.sidebar-user .user-handle{display:none}
+  .sidebar-logo{padding:16px 0 8px;justify-content:center}
+  .post-btn{width:48px;height:48px;padding:0;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px}
+  .post-btn-label{display:none}
+  .chat-list{width:260px}
+}
+@media(max-width:500px){
+  .chat-list{width:100%;position:absolute;z-index:5;background:var(--bg)}
+  .chat-window{position:absolute;inset:0;z-index:6;background:var(--bg)}
+}
+</style>
+</head>
+<body>
+
+<div class="notif" id="notif"></div>
+
+<!-- ═══════════════════════════════ AUTH ═══════════════════════════════════ -->
+<div id="auth-screen">
+  <div class="auth-box">
+    <div class="auth-logo">commsmeme</div>
+    <div class="auth-tagline">Your community. Your memes.</div>
+    <div class="auth-tabs">
+      <div class="auth-tab active" onclick="switchAuthTab('signup')">Create account</div>
+      <div class="auth-tab" onclick="switchAuthTab('login')">Sign in</div>
+    </div>
+    <div id="signup-panel">
+      <label class="auth-label">Display Name</label>
+      <input class="auth-input" id="su-name" placeholder="Your Name" maxlength="50" onkeydown="if(event.key==='Enter')doSignup()">
+      <label class="auth-label">Username</label>
+      <input class="auth-input" id="su-username" placeholder="@username" maxlength="30" onkeydown="if(event.key==='Enter')doSignup()">
+      <label class="auth-label">Password</label>
+      <input class="auth-input" id="su-password" type="password" placeholder="Min 8 characters" maxlength="100" onkeydown="if(event.key==='Enter')doSignup()">
+      <div class="pw-hint">At least 8 characters</div>
+      <div class="err" id="su-err"></div>
+      <button class="auth-btn primary" id="su-btn" onclick="doSignup()">Create Account</button>
+    </div>
+    <div id="login-panel" class="hide">
+      <label class="auth-label">Username</label>
+      <input class="auth-input" id="li-username" placeholder="@username" onkeydown="if(event.key==='Enter')doLogin()">
+      <label class="auth-label">Password</label>
+      <input class="auth-input" id="li-password" type="password" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()">
+      <div class="err" id="li-err"></div>
+      <button class="auth-btn primary" id="li-btn" onclick="doLogin()">Sign in</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ APP ════════════════════════════════════ -->
+<div id="app" class="hide">
+
+  <!-- LEFT SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-logo">commsmeme</div>
+    <nav>
+      <div class="nav-item active" id="nav-home" onclick="navigate('home')">
+        <span class="nav-icon">🏠</span><span class="nav-label">Home</span>
+      </div>
+      <div class="nav-item" id="nav-explore" onclick="navigate('explore')">
+        <span class="nav-icon">🔍</span><span class="nav-label">Explore</span>
+      </div>
+      <div class="nav-item" id="nav-communities" onclick="navigate('communities')">
+        <span class="nav-icon">👥</span><span class="nav-label">Communities</span>
+      </div>
+      <div class="nav-item" id="nav-messages" onclick="navigate('messages')">
+        <span class="nav-icon">✉️</span><span class="nav-label">Messages</span>
+      </div>
+      <div class="nav-item" id="nav-profile" onclick="navigate('profile')">
+        <span class="nav-icon">👤</span><span class="nav-label">Profile</span>
+      </div>
+    </nav>
+    <button class="post-btn" onclick="openComposeModal()">
+      <span class="post-btn-label">Post</span><span style="display:none" class="post-btn-icon">✏️</span>
+    </button>
+    <div class="sidebar-spacer"></div>
+    <div class="sidebar-user" onclick="navigate('profile')">
+      <div class="avatar" id="sidebar-avatar">?</div>
+      <div>
+        <div class="user-name" id="sidebar-name">—</div>
+        <div class="user-handle" id="sidebar-handle">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN COLUMN -->
+  <div class="main">
+
+    <!-- HOME -->
+    <div id="page-home" class="hide">
+      <div class="page-header">
+        <div class="tabs">
+          <div class="tab active">For you</div>
+          <div class="tab">Following</div>
+        </div>
+      </div>
+      <div class="compose-box">
+        <div class="avatar" id="compose-avatar">?</div>
+        <div class="compose-right">
+          <textarea class="compose-input" id="compose-text" placeholder="What's on your mind?" maxlength="280" oninput="updateCharCount('compose-text','char-count')"></textarea>
+          <div class="compose-actions">
+            <div class="compose-icons">
+              <div class="compose-icon-btn" title="Image">📷</div>
+              <div class="compose-icon-btn" title="GIF">GIF</div>
+              <div class="compose-icon-btn" title="Emoji">😊</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px">
+              <span class="char-count" id="char-count">280</span>
+              <button class="send-btn" onclick="submitPost()">Post</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="feed"><div class="loading-state"><div class="spinner"></div></div></div>
+    </div>
+
+    <!-- EXPLORE -->
+    <div id="page-explore" class="hide">
+      <div class="page-header"><div class="page-title">Explore</div></div>
+      <div style="padding:12px 16px">
+        <div class="search-box" style="background:var(--bg3)">
+          <span style="color:var(--text2)">🔍</span>
+          <input class="search-input" id="explore-search" placeholder="Search commsmeme" oninput="doSearch()">
+        </div>
+      </div>
+      <div id="explore-results"></div>
+    </div>
+
+    <!-- COMMUNITIES LIST -->
+    <div id="page-communities" class="hide">
+      <div class="page-header">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px 0">
+          <div style="font-size:20px;font-weight:700">Communities</div>
+        </div>
+        <div class="tabs">
+          <div class="tab active" onclick="commTab('discover')">Discover</div>
+          <div class="tab" onclick="commTab('joined')">Joined</div>
+        </div>
+      </div>
+      <div class="create-comm-btn" onclick="openCreateCommunityModal()">
+        <span style="font-size:20px;font-weight:300">＋</span> Create a new community
+      </div>
+      <div id="communities-list"><div class="loading-state"><div class="spinner"></div></div></div>
+    </div>
+
+    <!-- COMMUNITY PAGE (single community feed) -->
+    <div id="page-community" class="hide">
+      <div class="page-header">
+        <div class="page-title-row">
+          <button class="back-btn" onclick="navigate('communities')">←</button>
+          <div>
+            <div style="font-size:20px;font-weight:700" id="comm-page-title">Community</div>
+            <div style="font-size:13px;color:var(--text2)" id="comm-page-subtitle"></div>
+          </div>
+        </div>
+      </div>
+      <div id="comm-page-body"></div>
+    </div>
+
+    <!-- MESSAGES -->
+    <div id="page-messages" class="hide" style="padding:0">
+      <div class="chat-layout">
+        <div class="chat-list">
+          <div class="chat-header">
+            <span>Messages</span>
+            <button class="new-chat-btn" onclick="openNewChatModal()">✏️</button>
+          </div>
+          <div id="chat-list-items"><div class="loading-state"><div class="spinner"></div></div></div>
+        </div>
+        <div class="chat-window" id="chat-window">
+          <div class="no-chat-selected">
+            <div style="font-size:44px;margin-bottom:8px">✉️</div>
+            <div style="font-size:22px;font-weight:800;color:var(--text)">Select a message</div>
+            <div style="font-size:14px">Choose an existing chat or start a new one.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POST DETAIL -->
+    <div id="page-post" class="hide">
+      <div class="page-header">
+        <div class="page-title-row">
+          <button class="back-btn" id="post-back-btn" onclick="history.back()">←</button>
+          <div style="font-size:20px;font-weight:700">Post</div>
+        </div>
+      </div>
+      <div id="post-detail-body"></div>
+    </div>
+
+    <!-- PROFILE -->
+    <div id="page-profile" class="hide">
+      <div class="page-header">
+        <div class="page-title-row">
+          <button class="back-btn" onclick="navigate('home')">←</button>
+          <div>
+            <div style="font-size:20px;font-weight:700" id="profile-page-name">—</div>
+            <div style="font-size:13px;color:var(--text2)" id="profile-page-posts">0 posts</div>
+          </div>
+        </div>
+      </div>
+      <div class="profile-banner">
+        <div class="profile-avatar-wrap">
+          <div class="avatar lg" id="profile-page-avatar">?</div>
+        </div>
+      </div>
+      <div class="profile-actions">
+        <button class="profile-edit-btn">Edit profile</button>
+      </div>
+      <div class="profile-info">
+        <div class="profile-name" id="profile-name-disp">—</div>
+        <div class="profile-handle" id="profile-handle-disp">@—</div>
+        <div class="profile-stats">
+          <div class="profile-stat"><b id="pstat-following">0</b> <span>Following</span></div>
+          <div class="profile-stat"><b id="pstat-followers">0</b> <span>Followers</span></div>
+        </div>
+      </div>
+      <div id="profile-posts"></div>
+    </div>
+
+  </div><!-- /main -->
+
+  <!-- RIGHT SIDEBAR -->
+  <div class="right-sidebar">
+    <div class="search-box" style="margin-top:8px">
+      <span style="color:var(--text2)">🔍</span>
+      <input class="search-input" placeholder="Search commsmeme">
+    </div>
+    <div class="widget-card">
+      <div class="widget-title">Trending</div>
+      <div class="trend-item"><div class="trend-cat">Technology · Trending</div><div class="trend-name">#OpenAI</div><div class="trend-count">124K posts</div></div>
+      <div class="trend-item"><div class="trend-cat">Crypto · Trending</div><div class="trend-name">#Bitcoin</div><div class="trend-count">89K posts</div></div>
+      <div class="trend-item"><div class="trend-cat">Trending</div><div class="trend-name">#BuildInPublic</div><div class="trend-count">45K posts</div></div>
+      <div class="trend-item"><div class="trend-cat">Science · Trending</div><div class="trend-name">#SpaceX</div><div class="trend-count">67K posts</div></div>
+    </div>
+    <div class="widget-card">
+      <div class="widget-title">Who to follow</div>
+      <div id="who-to-follow"></div>
+      <a class="show-more" onclick="loadSuggestions()">Refresh</a>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<!-- ═══════════════════════ MODALS ══════════════════════════════════════════ -->
+
+<!-- COMPOSE MODAL -->
+<div class="modal-overlay hide" id="compose-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-close" onclick="closeModal('compose-modal')">✕</div>
+      <div style="font-size:16px;font-weight:700" id="compose-modal-title">New Post</div>
+    </div>
+    <div class="compose-box" style="padding:20px;border-bottom:none">
+      <div class="avatar" id="modal-avatar">?</div>
+      <div class="compose-right">
+        <div id="compose-comm-label" class="hide" style="font-size:13px;color:var(--blue);margin-bottom:8px;font-weight:600"></div>
+        <textarea class="compose-input" id="modal-compose-text" placeholder="What's on your mind?" maxlength="280" oninput="updateCharCount('modal-compose-text','modal-char-count')" style="font-size:19px;min-height:120px"></textarea>
+        <div class="compose-actions">
+          <div class="compose-icons">
+            <div class="compose-icon-btn">📷</div>
+            <div class="compose-icon-btn">GIF</div>
+            <div class="compose-icon-btn">😊</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <span class="char-count" id="modal-char-count">280</span>
+            <button class="send-btn" onclick="submitModalPost()">Post</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NEW CHAT MODAL -->
+<div class="modal-overlay hide" id="newchat-modal">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-header">
+      <div class="modal-close" onclick="closeModal('newchat-modal')">✕</div>
+      <div style="font-size:18px;font-weight:700">New message</div>
+    </div>
+    <div class="modal-body">
+      <label class="modal-label">Search people</label>
+      <input id="newchat-search" class="modal-input" placeholder="Search by username or name…" oninput="searchNewChat()">
+      <div id="newchat-results"></div>
+      <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
+        <div style="font-size:16px;font-weight:700;margin-bottom:14px">Create a group chat</div>
+        <label class="modal-label">Group name</label>
+        <input id="group-name-input" class="modal-input" placeholder="e.g. Squad, Work Team…">
+        <div class="modal-err" id="group-err"></div>
+        <button class="modal-submit-btn" onclick="createGroupChat()">＋ Create Group</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CREATE COMMUNITY MODAL -->
+<div class="modal-overlay hide" id="create-comm-modal">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-header">
+      <div class="modal-close" onclick="closeModal('create-comm-modal')">✕</div>
+      <div style="font-size:18px;font-weight:700">Create a community</div>
+    </div>
+    <div class="modal-body">
+      <label class="modal-label">Community name *</label>
+      <input id="comm-name-input" class="modal-input" placeholder="e.g. Tech Builders" maxlength="50">
+      <label class="modal-label">Description</label>
+      <textarea id="comm-desc-input" class="modal-textarea" placeholder="What is this community about?" maxlength="200"></textarea>
+      <label class="modal-label">Icon</label>
+      <div class="icon-picker" id="icon-picker">
+        <div class="icon-opt selected" data-icon="👥" onclick="selectIcon(this)">👥</div>
+        <div class="icon-opt" data-icon="💻" onclick="selectIcon(this)">💻</div>
+        <div class="icon-opt" data-icon="🚀" onclick="selectIcon(this)">🚀</div>
+        <div class="icon-opt" data-icon="🎨" onclick="selectIcon(this)">🎨</div>
+        <div class="icon-opt" data-icon="🔬" onclick="selectIcon(this)">🔬</div>
+        <div class="icon-opt" data-icon="🪙" onclick="selectIcon(this)">🪙</div>
+        <div class="icon-opt" data-icon="🎮" onclick="selectIcon(this)">🎮</div>
+        <div class="icon-opt" data-icon="📚" onclick="selectIcon(this)">📚</div>
+        <div class="icon-opt" data-icon="🎵" onclick="selectIcon(this)">🎵</div>
+        <div class="icon-opt" data-icon="⚡" onclick="selectIcon(this)">⚡</div>
+        <div class="icon-opt" data-icon="🌍" onclick="selectIcon(this)">🌍</div>
+        <div class="icon-opt" data-icon="🏆" onclick="selectIcon(this)">🏆</div>
+        <div class="icon-opt" data-icon="😂" onclick="selectIcon(this)">😂</div>
+        <div class="icon-opt" data-icon="🔥" onclick="selectIcon(this)">🔥</div>
+      </div>
+      <div class="modal-err" id="comm-err"></div>
+      <button class="modal-submit-btn" id="comm-submit-btn" onclick="submitCreateCommunity()">Create Community</button>
+    </div>
+  </div>
+</div>
+
+<!-- SHARE MODAL -->
+<div class="modal-overlay hide" id="share-modal">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-header">
+      <div class="modal-close" onclick="closeModal('share-modal')">✕</div>
+      <div style="font-size:18px;font-weight:700" id="share-modal-title">Share</div>
+    </div>
+    <div class="modal-body">
+      <label class="modal-label">Shareable link</label>
+      <div style="display:flex;gap:8px">
+        <input class="modal-input" id="share-url-input" readonly style="margin-bottom:0;cursor:text;flex:1">
+        <button class="modal-submit-btn" style="width:auto;padding:12px 18px" onclick="copyShareLink()">Copy</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ SCRIPTS ════════════════════════════════════════ -->
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script>
+'use strict';
+
+// ─── CONFIG ──────────────────────────────────────────────────────────────────
+const API = window.location.hostname === 'localhost' ? 'http://localhost:3001' : '';
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let token       = localStorage.getItem('cmm_token') || null;
+let currentUser = JSON.parse(localStorage.getItem('cmm_user') || 'null');
+let posts       = [];
+let allCommunities = [];
+let socket      = null;
+let activeChatId = null;
+let composeCommId = null;  // when posting inside a community
+let historyStack = ['home']; // simple nav stack for back button
+
+// ─── UTILS ───────────────────────────────────────────────────────────────────
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function timeAgo(ts){
+  const d=(Date.now()-ts)/1000;
+  if(d<60)  return Math.floor(d)+'s';
+  if(d<3600) return Math.floor(d/60)+'m';
+  if(d<86400) return Math.floor(d/3600)+'h';
+  return new Date(ts).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+}
+function fmtNum(n){ return n>=1e6?(n/1e6).toFixed(1)+'M':n>=1000?(n/1000).toFixed(1)+'K':String(n||0); }
+
+const COLORS=['#1d9bf0','#7c3aed','#00ba7c','#f4212e','#ffd400','#ff7700','#e0426a','#0ea5e9'];
+function avatarColor(u){ let h=0; for(let i=0;i<u.length;i++) h=(h+u.charCodeAt(i))%COLORS.length; return COLORS[h]; }
+
+function toast(msg,isErr){
+  const n=document.getElementById('notif');
+  n.textContent=msg;
+  n.style.background=isErr?'var(--red)':'var(--blue)';
+  n.classList.add('show');
+  clearTimeout(n._t);
+  n._t=setTimeout(()=>n.classList.remove('show'),2500);
+}
+
+async function api(path,opts={}){
+  const headers={'Content-Type':'application/json'};
+  if(token) headers['Authorization']='Bearer '+token;
+  const res=await fetch(API+path,{...opts,headers:{...headers,...(opts.headers||{})}});
+  const data=await res.json();
+  if(!res.ok) throw new Error(data.error||'Error');
+  return data;
+}
+
+function updateCharCount(textareaId,counterId){
+  const v=document.getElementById(textareaId)?.value.length||0;
+  const el=document.getElementById(counterId);
+  if(!el) return;
+  el.textContent=280-v;
+  el.className='char-count'+(v>260?' char-warn':'')+(v>=280?' char-danger':'');
+}
+
+// ─── ROUTER ──────────────────────────────────────────────────────────────────
+const PAGES=['home','explore','communities','community','messages','post','profile'];
+
+function showOnlyPage(p){
+  PAGES.forEach(pg=>document.getElementById('page-'+pg)?.classList.toggle('hide',pg!==p));
+  // update nav highlight
+  ['home','explore','communities','messages','profile'].forEach(pg=>{
+    document.getElementById('nav-'+pg)?.classList.toggle('active',pg===p||(p==='community'&&pg==='communities')||(p==='post'&&pg==='home'));
+  });
+}
+
+function navigate(page, params){
+  historyStack.push({page,params});
+  _showPage(page, params);
+  // update URL without full reload
+  const url = buildURL(page, params);
+  window.history.pushState({page,params}, '', url);
+}
+
+function buildURL(page, params){
+  if(page==='post')       return '/post/' + (params?.id||'');
+  if(page==='community')  return '/community/' + (params?.id||'');
+  if(page==='profile')    return '/profile';
+  if(page==='messages')   return '/messages';
+  if(page==='explore')    return '/explore';
+  return '/';
+}
+
+function _showPage(page, params){
+  showOnlyPage(page);
+  if(page==='home')        loadFeed();
+  if(page==='explore')     renderExplore('');
+  if(page==='communities') loadCommunities();
+  if(page==='community')   loadCommunityPage(params?.id);
+  if(page==='messages')    loadChats();
+  if(page==='post')        loadPostDetail(params?.id);
+  if(page==='profile')     renderProfilePage();
+}
+
+// Handle browser back/forward
+window.addEventListener('popstate', e=>{
+  const {page,params} = e.state || {page:'home'};
+  _showPage(page, params);
+});
+
+// ─── AUTH ─────────────────────────────────────────────────────────────────────
+function switchAuthTab(tab){
+  document.querySelectorAll('.auth-tab').forEach((t,i)=>t.classList.toggle('active',i===(tab==='signup'?0:1)));
+  document.getElementById('signup-panel').classList.toggle('hide',tab!=='signup');
+  document.getElementById('login-panel').classList.toggle('hide',tab!=='login');
+}
+
+async function doSignup(){
+  const name=document.getElementById('su-name').value.trim();
+  const username=document.getElementById('su-username').value.trim().replace('@','');
+  const password=document.getElementById('su-password').value;
+  const errEl=document.getElementById('su-err');
+  errEl.textContent='';
+  if(!name){errEl.textContent='Enter your name';return;}
+  if(!username){errEl.textContent='Enter a username';return;}
+  if(password.length<8){errEl.textContent='Password must be at least 8 characters';return;}
+  const btn=document.getElementById('su-btn');
+  btn.disabled=true; btn.textContent='Creating…';
+  try{
+    const data=await api('/api/auth/signup',{method:'POST',body:JSON.stringify({username,name,password})});
+    saveSession(data);
+  }catch(e){ errEl.textContent=e.message; }
+  finally{ btn.disabled=false; btn.textContent='Create Account'; }
+}
+
+async function doLogin(){
+  const username=document.getElementById('li-username').value.trim().replace('@','');
+  const password=document.getElementById('li-password').value;
+  const errEl=document.getElementById('li-err');
+  errEl.textContent='';
+  if(!username||!password){errEl.textContent='Fill all fields';return;}
+  const btn=document.getElementById('li-btn');
+  btn.disabled=true; btn.textContent='Signing in…';
+  try{
+    const data=await api('/api/auth/login',{method:'POST',body:JSON.stringify({username,password})});
+    saveSession(data);
+  }catch(e){ errEl.textContent=e.message; }
+  finally{ btn.disabled=false; btn.textContent='Sign in'; }
+}
+
+function saveSession(data){
+  token=data.token; currentUser=data.user;
+  localStorage.setItem('cmm_token',token);
+  localStorage.setItem('cmm_user',JSON.stringify(currentUser));
+  bootApp();
+}
+
+function bootApp(){
+  document.getElementById('auth-screen').classList.add('hide');
+  document.getElementById('app').classList.remove('hide');
+  updateSidebar();
+  initSocket();
+  loadSuggestions();
+  // Route based on current URL
+  routeFromURL();
+}
+
+function routeFromURL(){
+  const path=window.location.pathname;
+  if(path.startsWith('/post/')){
+    const id=path.split('/post/')[1];
+    if(id){ _showPage('post',{id}); window.history.replaceState({page:'post',params:{id}},'',' '); return; }
+  }
+  if(path.startsWith('/community/')){
+    const id=path.split('/community/')[1];
+    if(id){ _showPage('community',{id}); window.history.replaceState({page:'community',params:{id}},'',' '); return; }
+  }
+  if(path==='/invite/'){ /* handled below */ }
+  _showPage('home');
+  window.history.replaceState({page:'home'},'','/');
+}
+
+// ─── SOCKET ───────────────────────────────────────────────────────────────────
+function initSocket(){
+  if(socket) socket.disconnect();
+  socket=io(API,{auth:{token}});
+  socket.on('new_post',post=>{
+    // Only show real-time update if it's from someone else
+    if(post.username!==currentUser.username){
+      post.liked=0; post.reposted=0;
+      posts.unshift(post);
+      // Only re-render if home is visible
+      if(!document.getElementById('page-home').classList.contains('hide')) renderFeed();
+    }
+  });
+  socket.on('new_message',msg=>{
+    // Socket only fires for OTHER users' messages (server uses .except())
+    if(msg.chat_id===activeChatId) appendMessage(msg);
+    // Refresh chat list quietly
+  });
+}
+
+// ─── SIDEBAR ─────────────────────────────────────────────────────────────────
+function updateSidebar(){
+  const u=currentUser;
+  const init=(u.name[0]||'?').toUpperCase();
+  ['sidebar-avatar','compose-avatar','modal-avatar'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el){el.textContent=init;el.style.background=avatarColor(u.username);}
+  });
+  document.getElementById('sidebar-name').textContent=u.name;
+  document.getElementById('sidebar-handle').textContent='@'+u.username;
+}
+
+// ─── FEED ─────────────────────────────────────────────────────────────────────
+async function loadFeed(){
+  document.getElementById('feed').innerHTML='<div class="loading-state"><div class="spinner"></div></div>';
+  try{ posts=await api('/api/posts'); renderFeed(); }
+  catch(e){ document.getElementById('feed').innerHTML='<div class="loading-state">Failed to load</div>'; }
+}
+
+function renderFeed(){
+  document.getElementById('feed').innerHTML = posts.length
+    ? posts.map(p=>renderPost(p)).join('')
+    : '<div class="empty-state"><div class="empty-state-icon">📭</div><div class="empty-state-title">No posts yet</div><div>Be the first to post something!</div></div>';
+}
+
+function renderPost(p){
+  const init=(p.name[0]||'?').toUpperCase();
+  const commTag = p.comm_id
+    ? `<div class="post-comm-tag" onclick="event.stopPropagation();navigate('community',{id:'${p.comm_id}'})">${p.comm_icon||'👥'} ${esc(p.comm_name)}</div>`
+    : '';
+  return `<div class="post" data-id="${p.id}" onclick="openPost('${p.id}')">
+    <div class="avatar" style="background:${avatarColor(p.username)}">${init}</div>
+    <div class="post-body">
+      ${commTag}
+      <div class="post-header">
+        <span class="post-name">${esc(p.name)}</span>
+        <span class="post-handle">@${esc(p.username)}</span>
+        <span class="post-dot">·</span>
+        <span class="post-time">${timeAgo(p.ts)}</span>
+      </div>
+      <div class="post-text">${esc(p.text)}</div>
+      <div class="post-actions">
+        <div class="action-btn reply-btn" onclick="event.stopPropagation()"><span class="action-icon">💬</span><span>${fmtNum(p.replies)}</span></div>
+        <div class="action-btn repost-btn ${p.reposted?'reposted':''}" onclick="event.stopPropagation();toggleRepost('${p.id}',this)"><span class="action-icon">🔁</span><span class="repost-count-${p.id}">${fmtNum(p.reposts)}</span></div>
+        <div class="action-btn like-btn ${p.liked?'liked':''}" onclick="event.stopPropagation();toggleLike('${p.id}',this)"><span class="action-icon like-icon-${p.id}">${p.liked?'❤️':'🤍'}</span><span class="like-count-${p.id}">${fmtNum(p.likes)}</span></div>
+        <div class="action-btn share-btn" onclick="event.stopPropagation();sharePost('${p.id}')"><span class="action-icon">🔗</span></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ─── POST DETAIL ──────────────────────────────────────────────────────────────
+function openPost(id){
+  navigate('post',{id});
+}
+
+async function loadPostDetail(id){
+  document.getElementById('post-detail-body').innerHTML='<div class="loading-state"><div class="spinner"></div></div>';
+  try{
+    const p = await api('/api/posts/'+id);
+    const init=(p.name[0]||'?').toUpperCase();
+    const commTag = p.comm_id
+      ? `<div class="post-comm-tag" style="display:inline-flex;margin-bottom:10px" onclick="navigate('community',{id:'${p.comm_id}'})">${p.comm_icon||'👥'} ${esc(p.comm_name)}</div><br>`
+      : '';
+    document.getElementById('post-detail-body').innerHTML=`
+      <div class="post-detail">
+        <div style="display:flex;gap:12px;align-items:flex-start">
+          <div class="avatar" style="background:${avatarColor(p.username)}">${init}</div>
+          <div>
+            <div class="user-name">${esc(p.name)}</div>
+            <div class="user-handle">@${esc(p.username)}</div>
+          </div>
+        </div>
+        <div style="margin-top:14px">${commTag}</div>
+        <div class="post-text" style="font-size:23px;line-height:1.4;margin-top:2px">${esc(p.text)}</div>
+        <div style="font-size:14px;color:var(--text2);margin-top:12px">${new Date(p.ts).toLocaleString()}</div>
+        <div class="post-detail-stats">
+          <div class="post-stat"><b>${fmtNum(p.reposts)}</b> <span>Reposts</span></div>
+          <div class="post-stat"><b>${fmtNum(p.likes)}</b> <span>Likes</span></div>
+        </div>
+        <div class="post-actions" style="padding:4px 0">
+          <div class="action-btn reply-btn"><span class="action-icon">💬</span><span>${fmtNum(p.replies)}</span></div>
+          <div class="action-btn repost-btn ${p.reposted?'reposted':''}" onclick="toggleRepost('${p.id}',this)"><span class="action-icon">🔁</span><span class="repost-count-${p.id}">${fmtNum(p.reposts)}</span></div>
+          <div class="action-btn like-btn ${p.liked?'liked':''}" onclick="toggleLike('${p.id}',this)"><span class="action-icon like-icon-${p.id}">${p.liked?'❤️':'🤍'}</span><span class="like-count-${p.id}">${fmtNum(p.likes)}</span></div>
+          <div class="action-btn share-btn" onclick="sharePost('${p.id}')"><span class="action-icon">🔗</span></div>
+        </div>
+      </div>`;
+  }catch(e){
+    document.getElementById('post-detail-body').innerHTML='<div class="loading-state">Post not found</div>';
+  }
+}
+
+// ─── LIKE / REPOST ────────────────────────────────────────────────────────────
+async function toggleLike(id, btn){
+  try{
+    const data=await api('/api/posts/'+id+'/like',{method:'POST'});
+    // Update all instances on the page
+    document.querySelectorAll('.like-icon-'+id).forEach(el=>el.textContent=data.liked?'❤️':'🤍');
+    document.querySelectorAll('.like-count-'+id).forEach(el=>{
+      const p=posts.find(x=>x.id===id);
+      if(p){ p.liked=data.liked?1:0; p.likes+=data.liked?1:-1; el.textContent=fmtNum(p.likes); }
+    });
+    btn?.classList.toggle('liked',data.liked);
+  }catch(e){ toast(e.message,true); }
+}
+
+async function toggleRepost(id, btn){
+  try{
+    const data=await api('/api/posts/'+id+'/repost',{method:'POST'});
+    document.querySelectorAll('.repost-count-'+id).forEach(el=>{
+      const p=posts.find(x=>x.id===id);
+      if(p){ p.reposted=data.reposted?1:0; p.reposts+=data.reposted?1:-1; el.textContent=fmtNum(p.reposts); }
+    });
+    btn?.classList.toggle('reposted',data.reposted);
+  }catch(e){ toast(e.message,true); }
+}
+
+// ─── SHARE ────────────────────────────────────────────────────────────────────
+function sharePost(id){
+  const url=window.location.origin+'/post/'+id;
+  showShareModal('Share Post',url);
+}
+
+function shareCommunity(id){
+  const url=window.location.origin+'/community/'+id;
+  showShareModal('Invite to Community',url);
+}
+
+function showShareModal(title, url){
+  document.getElementById('share-modal-title').textContent=title;
+  document.getElementById('share-url-input').value=url;
+  document.getElementById('share-modal').classList.remove('hide');
+}
+
+function copyShareLink(){
+  const inp=document.getElementById('share-url-input');
+  inp.select();
+  navigator.clipboard?.writeText(inp.value).then(()=>toast('Link copied!')).catch(()=>{
+    document.execCommand('copy');
+    toast('Link copied!');
+  });
+}
+
+// ─── COMPOSE ──────────────────────────────────────────────────────────────────
+function openComposeModal(commId, commName){
+  composeCommId = commId || null;
+  const label=document.getElementById('compose-comm-label');
+  const title=document.getElementById('compose-modal-title');
+  if(commId){
+    label.textContent='Posting in '+commName;
+    label.classList.remove('hide');
+    title.textContent='Post to '+commName;
+  } else {
+    label.classList.add('hide');
+    title.textContent='New Post';
+  }
+  document.getElementById('modal-compose-text').value='';
+  updateCharCount('modal-compose-text','modal-char-count');
+  document.getElementById('compose-modal').classList.remove('hide');
+  setTimeout(()=>document.getElementById('modal-compose-text').focus(),100);
+}
+
+async function submitPost(){
+  await doPost(document.getElementById('compose-text'), null);
+}
+
+async function submitModalPost(){
+  await doPost(document.getElementById('modal-compose-text'), composeCommId);
+  closeModal('compose-modal');
+}
+
+async function doPost(inp, commId){
+  const t=inp?.value.trim();
+  if(!t) return;
+  try{
+    const body={text:t};
+    if(commId) body.comm_id=commId;
+    const post=await api('/api/posts',{method:'POST',body:JSON.stringify(body)});
+    post.liked=0; post.reposted=0;
+    posts.unshift(post);
+    inp.value='';
+    updateCharCount('compose-text','char-count');
+    renderFeed();
+    toast('Posted!');
+    // If on community page, refresh it
+    if(commId) loadCommunityPage(commId);
+  }catch(e){ toast(e.message,true); }
+}
+
+function closeModal(id){ document.getElementById(id)?.classList.add('hide'); }
+
+// ─── EXPLORE ──────────────────────────────────────────────────────────────────
+function renderExplore(q){
+  const filtered=q?posts.filter(p=>p.text.toLowerCase().includes(q.toLowerCase())||p.username.toLowerCase().includes(q.toLowerCase())):posts;
+  const sorted=[...filtered].sort((a,b)=>b.ts-a.ts);
+  document.getElementById('explore-results').innerHTML=sorted.length
+    ?sorted.map(renderPost).join('')
+    :'<div class="loading-state">No results</div>';
+}
+function doSearch(){ renderExplore(document.getElementById('explore-search').value); }
+
+// ─── WHO TO FOLLOW ───────────────────────────────────────────────────────────
+async function loadSuggestions(){
+  try{
+    const users=await api('/api/users/suggestions/list');
+    document.getElementById('who-to-follow').innerHTML=users.map(u=>`
+      <div class="who-item">
+        <div class="avatar sm" style="background:${avatarColor(u.username)}">${u.name[0]}</div>
+        <div class="who-info"><div class="user-name">${esc(u.name)}</div><div class="user-handle">@${esc(u.username)}</div></div>
+        <button class="follow-btn ${u.isFollowing?'following':''}" onclick="toggleFollow(event,'${u.username}',this)">${u.isFollowing?'Following':'Follow'}</button>
+      </div>`).join('')||'<div style="padding:16px;color:var(--text2);font-size:14px">No suggestions yet</div>';
+  }catch(e){}
+}
+
+async function toggleFollow(e, username, btn){
+  e.stopPropagation();
+  try{
+    const data=await api('/api/users/'+username+'/follow',{method:'POST'});
+    btn.textContent=data.following?'Following':'Follow';
+    btn.classList.toggle('following',data.following);
+    if(data.following) toast('Following @'+username);
+  }catch(e){ toast(e.message,true); }
+}
+
+// ─── PROFILE ─────────────────────────────────────────────────────────────────
+async function renderProfilePage(){
+  const u=currentUser;
+  document.getElementById('profile-page-name').textContent=u.name;
+  document.getElementById('profile-name-disp').textContent=u.name;
+  document.getElementById('profile-handle-disp').textContent='@'+u.username;
+  const av=document.getElementById('profile-page-avatar');
+  av.textContent=(u.name[0]||'?').toUpperCase();
+  av.style.background=avatarColor(u.username);
+  try{
+    const data=await api('/api/users/'+u.username);
+    document.getElementById('pstat-following').textContent=data.following_count;
+    document.getElementById('pstat-followers').textContent=data.followers;
+    document.getElementById('profile-page-posts').textContent=data.posts.length+' posts';
+    document.getElementById('profile-posts').innerHTML=data.posts.map(renderPost).join('')||'<div class="empty-state"><div class="empty-state-icon">📝</div><div class="empty-state-title">No posts yet</div></div>';
+  }catch(e){}
+}
+
+// ─── COMMUNITIES ─────────────────────────────────────────────────────────────
+let commFilter='discover';
+
+async function loadCommunities(){
+  document.getElementById('communities-list').innerHTML='<div class="loading-state"><div class="spinner"></div></div>';
+  try{
+    allCommunities=await api('/api/communities');
+    renderCommunities();
+  }catch(e){
+    document.getElementById('communities-list').innerHTML='<div class="loading-state">Failed to load</div>';
+  }
+}
+
+function renderCommunities(){
+  const list=commFilter==='joined'?allCommunities.filter(c=>c.joined):allCommunities;
+  document.getElementById('communities-list').innerHTML=list.map(c=>`
+    <div class="community-card" onclick="navigate('community',{id:'${c.id}'})">
+      <div class="comm-header">
+        <div class="comm-icon" style="background:${c.color}22;color:${c.color}">${c.icon}</div>
+        <div>
+          <div class="comm-name">${esc(c.name)}</div>
+          <div class="comm-meta">${fmtNum(c.members)} members</div>
+        </div>
+      </div>
+      <div class="comm-desc">${esc(c.description)}</div>
+      <div class="comm-actions">
+        <button class="join-btn ${c.joined?'joined':''}" onclick="event.stopPropagation();toggleJoin('${c.id}',this)">${c.joined?'Leave':'Join'}</button>
+        <button class="invite-link-btn" onclick="event.stopPropagation();shareCommunity('${c.id}')">🔗 Invite link</button>
+      </div>
+    </div>`).join('')||'<div class="empty-state"><div class="empty-state-icon">👥</div><div class="empty-state-title">No communities yet</div><div>Create the first one!</div></div>';
+}
+
+function commTab(t){
+  commFilter=t;
+  document.querySelectorAll('#page-communities .tab').forEach((el,i)=>el.classList.toggle('active',i===(t==='discover'?0:1)));
+  renderCommunities();
+}
+
+async function toggleJoin(id, btn){
+  try{
+    const data=await api('/api/communities/'+id+'/join',{method:'POST'});
+    const c=allCommunities.find(x=>x.id===id);
+    if(c){ c.joined=data.joined?1:0; c.members+=data.joined?1:-1; }
+    renderCommunities();
+    if(data.joined) toast('Joined community!');
+  }catch(e){ toast(e.message,true); }
+}
+
+// ─── COMMUNITY PAGE ──────────────────────────────────────────────────────────
+let currentCommId = null;
+
+async function loadCommunityPage(id){
+  currentCommId=id;
+  document.getElementById('comm-page-body').innerHTML='<div class="loading-state"><div class="spinner"></div></div>';
+  try{
+    const c=await api('/api/communities/'+id);
+    document.getElementById('comm-page-title').textContent=c.name;
+    document.getElementById('comm-page-subtitle').textContent=fmtNum(c.members)+' members';
+
+    const isJoined=!!c.joined;
+    const bannerStyle=`background:linear-gradient(135deg,${c.color}55,${c.color}22)`;
+
+    document.getElementById('comm-page-body').innerHTML=`
+      <div class="comm-page-banner" style="${bannerStyle}">
+        <div class="comm-page-icon" style="background:${c.color}33;color:${c.color}">${c.icon}</div>
+      </div>
+      <div class="comm-page-info">
+        <div class="comm-page-name">${esc(c.name)}</div>
+        ${c.description?`<div class="comm-page-desc">${esc(c.description)}</div>`:''}
+        <div class="comm-page-meta">
+          <span>👥 ${fmtNum(c.members)} members</span>
+          <span>👤 Created by @${esc(c.created_by)}</span>
+        </div>
+        <div class="comm-page-actions">
+          <button class="join-btn ${isJoined?'joined':''}" id="comm-join-btn" onclick="toggleJoinFromPage('${id}',this)">${isJoined?'Leave':'Join Community'}</button>
+          <button class="invite-link-btn" onclick="shareCommunity('${id}')">🔗 Invite link</button>
+          ${isJoined?`<button class="invite-link-btn" style="color:var(--blue);border-color:var(--blue)" onclick="openComposeModal('${id}','${esc(c.name)}')">✏️ Post here</button>`:''}
+        </div>
+      </div>
+      ${isJoined?`
+      <div class="comm-compose">
+        <div class="avatar" style="background:${avatarColor(currentUser.username)}">${(currentUser.name[0]||'?').toUpperCase()}</div>
+        <div class="compose-right">
+          <textarea class="compose-input" id="comm-compose-text" placeholder="Post to ${esc(c.name)}…" maxlength="280" oninput="updateCharCount('comm-compose-text','comm-char-count')" style="font-size:17px;min-height:50px"></textarea>
+          <div class="compose-actions">
+            <span class="char-count" id="comm-char-count">280</span>
+            <button class="send-btn" onclick="submitCommPost('${id}')">Post</button>
+          </div>
+        </div>
+      </div>`:''}
+      <div id="comm-feed">
+        ${c.posts.length
+          ? c.posts.map(renderPost).join('')
+          : `<div class="empty-state"><div class="empty-state-icon">📭</div><div class="empty-state-title">No posts yet</div>${isJoined?'<div>Be the first to post!</div>':'<div>Join to start posting.</div>'}</div>`}
+      </div>`;
+  }catch(e){
+    document.getElementById('comm-page-body').innerHTML='<div class="loading-state">Failed to load community</div>';
+  }
+}
+
+async function toggleJoinFromPage(id, btn){
+  try{
+    const data=await api('/api/communities/'+id+'/join',{method:'POST'});
+    const c=allCommunities.find(x=>x.id===id);
+    if(c){ c.joined=data.joined?1:0; }
+    // Reload the community page to show/hide compose box
+    await loadCommunityPage(id);
+    if(data.joined) toast('Joined community!');
+  }catch(e){ toast(e.message,true); }
+}
+
+async function submitCommPost(commId){
+  const inp=document.getElementById('comm-compose-text');
+  const t=inp?.value.trim();
+  if(!t) return;
+  try{
+    const post=await api('/api/posts',{method:'POST',body:JSON.stringify({text:t,comm_id:commId})});
+    post.liked=0; post.reposted=0;
+    posts.unshift(post);
+    inp.value='';
+    // Prepend to community feed
+    const feed=document.getElementById('comm-feed');
+    if(feed){
+      const existing=feed.querySelector('.empty-state');
+      if(existing) existing.remove();
+      feed.insertAdjacentHTML('afterbegin',renderPost(post));
+    }
+    toast('Posted!');
+  }catch(e){ toast(e.message,true); }
+}
+
+// ─── CREATE COMMUNITY ────────────────────────────────────────────────────────
+function openCreateCommunityModal(){
+  document.getElementById('comm-name-input').value='';
+  document.getElementById('comm-desc-input').value='';
+  document.getElementById('comm-err').textContent='';
+  document.querySelectorAll('.icon-opt').forEach(el=>el.classList.remove('selected'));
+  document.querySelector('.icon-opt[data-icon="👥"]').classList.add('selected');
+  document.getElementById('create-comm-modal').classList.remove('hide');
+}
+
+function selectIcon(el){
+  document.querySelectorAll('.icon-opt').forEach(x=>x.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+async function submitCreateCommunity(){
+  const name=document.getElementById('comm-name-input').value.trim();
+  const description=document.getElementById('comm-desc-input').value.trim();
+  const icon=document.querySelector('.icon-opt.selected')?.dataset.icon||'👥';
+  const errEl=document.getElementById('comm-err');
+  const btn=document.getElementById('comm-submit-btn');
+  errEl.textContent='';
+  if(!name){errEl.textContent='Community name is required';return;}
+  btn.disabled=true; btn.textContent='Creating…';
+  try{
+    const comm=await api('/api/communities',{method:'POST',body:JSON.stringify({name,description,icon})});
+    allCommunities.unshift(comm);
+    closeModal('create-comm-modal');
+    navigate('community',{id:comm.id});
+    toast('Community "'+name+'" created!');
+  }catch(e){ errEl.textContent=e.message; }
+  finally{ btn.disabled=false; btn.textContent='Create Community'; }
+}
+
+// ─── MESSAGES ────────────────────────────────────────────────────────────────
+async function loadChats(){
+  document.getElementById('chat-list-items').innerHTML='<div class="loading-state"><div class="spinner"></div></div>';
+  try{
+    const chats=await api('/api/chats');
+    renderChatList(chats);
+  }catch(e){
+    document.getElementById('chat-list-items').innerHTML='<div class="loading-state">Failed to load</div>';
+  }
+}
+
+function renderChatList(chats){
+  if(!chats.length){
+    document.getElementById('chat-list-items').innerHTML='<div class="loading-state" style="padding:30px 16px">No messages yet</div>';
+    return;
+  }
+  document.getElementById('chat-list-items').innerHTML=chats.map(c=>{
+    const icon=c.type==='group'?'👥':c.name[0].toUpperCase();
+    return `<div class="chat-item ${activeChatId===c.id?'active':''}" onclick="openChat('${c.id}',${JSON.stringify(esc(c.name))},'${c.type}')">
+      <div class="avatar" style="background:${c.type==='group'?'#7c3aed':avatarColor(c.id)}">${icon}</div>
+      <div class="chat-preview">
+        <div class="chat-name">${esc(c.name)}${c.type==='group'?' 👥':''}</div>
+        <div class="chat-last">${c.last_message?esc(c.last_message):'No messages yet'}</div>
+      </div>
+      ${c.unread?`<div class="unread-badge">${c.unread}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+async function openChat(id, name, type){
+  activeChatId=id;
+  if(socket) socket.emit('join_chat',id);
+
+  // Highlight active
+  document.querySelectorAll('.chat-item').forEach(el=>el.classList.remove('active'));
+  document.querySelector(`.chat-item[onclick*="'${id}'"]`)?.classList.add('active');
+
+  const win=document.getElementById('chat-window');
+  win.innerHTML=`
+    <div class="chat-win-header">
+      <div class="avatar" style="background:${type==='group'?'#7c3aed':avatarColor(id)}">${type==='group'?'👥':name[0]}</div>
+      <div>
+        <div class="chat-win-name">${esc(name)}</div>
+        <div class="chat-win-sub">${type==='group'?'Group chat':'Direct message'}</div>
+      </div>
+    </div>
+    <div class="chat-messages" id="chat-msgs"></div>
+    <div class="chat-input-row">
+      <input class="chat-text-input" id="chat-inp" placeholder="Start a new message" onkeydown="if(event.key==='Enter')sendMsg()">
+      <div class="chat-send-btn" onclick="sendMsg()">➤</div>
+    </div>`;
+
+  try{
+    const msgs=await api('/api/chats/'+id+'/messages');
+    const el=document.getElementById('chat-msgs');
+    el.innerHTML=msgs.map(renderMsg).join('');
+    el.scrollTop=el.scrollHeight;
+  }catch(e){}
+  document.getElementById('chat-inp')?.focus();
+}
+
+function renderMsg(m){
+  const mine=m.from_user===currentUser.username;
+  return `<div class="msg ${mine?'mine':''}">
+    ${!mine?`<div class="avatar sm" style="background:${avatarColor(m.from_user)}">${m.from_user[0].toUpperCase()}</div>`:''}
+    <div>
+      ${!mine?`<div style="font-size:12px;color:var(--text2);margin-bottom:2px">${esc(m.from_user)}</div>`:''}
+      <div class="msg-bubble">${esc(m.text)}</div>
+      <div class="msg-time">${timeAgo(m.ts)}</div>
+    </div>
+  </div>`;
+}
+
+function appendMessage(m){
+  const el=document.getElementById('chat-msgs');
+  if(!el) return;
+  el.insertAdjacentHTML('beforeend',renderMsg(m));
+  el.scrollTop=el.scrollHeight;
+}
+
+async function sendMsg(){
+  const inp=document.getElementById('chat-inp');
+  const t=inp?.value.trim();
+  if(!t||!activeChatId) return;
+  inp.value='';
+  try{
+    // POST to server — server saves and emits to OTHER users via socket
+    // We append immediately ourselves (no socket echo for sender)
+    const msg=await api('/api/chats/'+activeChatId+'/messages',{method:'POST',body:JSON.stringify({text:t})});
+    appendMessage(msg); // sender sees it once, here
+  }catch(e){ toast(e.message,true); inp.value=t; }
+}
+
+function openNewChatModal(){
+  document.getElementById('newchat-modal').classList.remove('hide');
+  document.getElementById('newchat-results').innerHTML='';
+  document.getElementById('group-name-input').value='';
+  document.getElementById('group-err').textContent='';
+  document.getElementById('newchat-search').value='';
+}
+
+async function searchNewChat(){
+  const q=document.getElementById('newchat-search').value.trim();
+  if(!q){document.getElementById('newchat-results').innerHTML='';return;}
+  try{
+    const users=await api('/api/users/search?q='+encodeURIComponent(q));
+    document.getElementById('newchat-results').innerHTML=users
+      .filter(u=>u.username!==currentUser.username)
+      .map(u=>`
+        <div class="who-item" onclick="startDM('${u.username}','${esc(u.name)}')">
+          <div class="avatar sm" style="background:${avatarColor(u.username)}">${u.name[0]}</div>
+          <div class="who-info"><div class="user-name">${esc(u.name)}</div><div class="user-handle">@${esc(u.username)}</div></div>
+          <div style="color:var(--blue);font-size:13px">Message ›</div>
+        </div>`).join('')||'<div style="padding:12px;color:var(--text2);font-size:14px">No users found</div>';
+  }catch(e){}
+}
+
+async function startDM(username, name){
+  try{
+    const data=await api('/api/chats/dm',{method:'POST',body:JSON.stringify({username})});
+    closeModal('newchat-modal');
+    navigate('messages');
+    await loadChats();
+    openChat(data.id,name,'dm');
+  }catch(e){ toast(e.message,true); }
+}
+
+async function createGroupChat(){
+  const name=document.getElementById('group-name-input').value.trim();
+  const errEl=document.getElementById('group-err');
+  errEl.textContent='';
+  if(!name){errEl.textContent='Enter a group name';return;}
+  try{
+    const data=await api('/api/chats/group',{method:'POST',body:JSON.stringify({name})});
+    closeModal('newchat-modal');
+    navigate('messages');
+    await loadChats();
+    openChat(data.id,name,'group');
+    toast('Group "'+name+'" created!');
+  }catch(e){ errEl.textContent=e.message; }
+}
+
+// ─── MODAL CLOSE ON OVERLAY CLICK ────────────────────────────────────────────
+document.querySelectorAll('.modal-overlay').forEach(el=>{
+  el.addEventListener('click',function(e){ if(e.target===this) this.classList.add('hide'); });
+});
+
+// ─── INVITE LINK HANDLER ─────────────────────────────────────────────────────
+// If URL is /community/:id and user is not logged in, show invite banner after login
+function handleInviteAfterLogin(){
+  const path=window.location.pathname;
+  if(path.startsWith('/community/')){
+    const id=path.split('/community/')[1];
+    if(id && currentUser) navigate('community',{id});
+  }
+}
+
+// ─── BOOT ─────────────────────────────────────────────────────────────────────
+if(token && currentUser){
+  bootApp();
+} else {
+  // If URL has a community invite, prefill a welcome message
+  const path=window.location.pathname;
+  if(path.startsWith('/community/')){
+    document.querySelector('.auth-tagline').textContent='Sign in to join this community!';
+  }
+}
+</script>
+</body>
+</html>

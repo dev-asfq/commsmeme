@@ -443,4 +443,4 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
 
-server.listen(PORT, () => console.log(`🚀 commsmeme running on http://localhost:${PORT}`));
+server.listen(PORT, '0.0.0.0', () => console.log(`🚀 commsmeme running on port ${PORT}`));

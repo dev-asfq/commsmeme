@@ -7,7 +7,7 @@ const Database = require('better-sqlite3');
 const path    = require('path');
 const http    = require('http');
 const { Server } = require('socket.io');
-
+const path = require('path');
 const app    = express();
 const server = http.createServer(app);
 const io     = new Server(server, { cors: { origin: '*' } });
@@ -439,8 +439,8 @@ io.on('connection', socket => {
 });
 
 // ── SPA CATCH-ALL ─────────────────────────────────────────────────────────────
-app.get('*', (req, res) => {
-  res.sendFile(path.join(FRONTEND, 'index.html'));
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
 
 server.listen(PORT, () => console.log(`🚀 commsmeme running on http://localhost:${PORT}`));
